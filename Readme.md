@@ -1,3 +1,3 @@
-# Backend Practice
+# VideoTube
 
-Learning backend through this project
+VideoTube is a video sharing platform similar to Youtube
