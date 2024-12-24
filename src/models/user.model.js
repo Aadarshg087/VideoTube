@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { JsonWebTokenError } from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
@@ -26,7 +25,7 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
-    Avatar: {
+    avatar: {
       type: String,
       required: true,
     },
@@ -47,7 +46,7 @@ const userSchema = new Schema(
       type: String,
     },
   },
-  { Timestamp: true }
+  { timestamps: true }
 );
 
 userSchema.pre("save", async function (next) {

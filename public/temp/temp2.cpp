@@ -77,7 +77,7 @@ template <class T, class V>
 void _print(map<T, V> v)
 {
     cout << "[ ";
-    for (auto i : v)
+    for (auto  : v)
     {
         _print(i);
         cout << " ";
