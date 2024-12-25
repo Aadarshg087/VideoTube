@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken";
 
 /*
 
@@ -173,7 +174,6 @@ const loginUser = asyncHandler(async (req, res) => {
 STEP TO LOGOUT THE USER :
 - Find the _id or email or username of the current loggedin user
 - We can do that using middleware using jwt tokens
-- 
 - Then, we can import the user data here and clear refreshToken from the database
 
 */
@@ -197,4 +197,58 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out successfully"));
 });
 
-export { registerUser, loginUser, logoutUser };
+/* 
+
+STEPS TO REFRESH THE TOKEN AFTER USER LOGGED OUT AFTER TIME OUT OF ACCESS TOKEN :
+- User will hit the endpoint
+- Then, we will extract the refreshToken from the cookies
+- If it matches from our refreshToken, then we will login the user, otherwise throw error
+
+*/
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  const incomingRefreshToken = req.cookies?.refreshToken;
+
+  if (!incomingRefreshToken) {
+    console.log("Didn't found the refreshToken");
+    throw new ApiError(401, "Unatuhorized Request");
+  }
+
+  const decodeToken = jwt.verify(
+    incomingRefreshToken,
+    process.env.REFRESH_TOKEN_SECRET
+  );
+
+  const user = await User.findById(decodeToken?._id);
+  if (!user) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+
+  // console.log(decodeToken);
+  // console.log(user.username);
+  // console.log(user.refreshToken);
+
+  if (incomingRefreshToken !== user.refreshToken) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+  // creating the new token since the old access token are expired
+  const { refreshToken, accessToken } = await generateTokens(user._id);
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        { accessToken, refreshToken },
+        "User loggedin Successfully"
+      )
+    );
+});
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken };
