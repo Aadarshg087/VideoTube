@@ -127,19 +127,21 @@ const generateTokens = async (userid) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
+  console.log(req.body);
+  console.log(username, email, password);
   if (!username && !email) {
     throw new ApiError(400, "Username or email is required");
   }
 
-  const user = User.findOne({
+  const user = await User.findOne({
     $or: [{ email }, { username }],
   });
 
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-
-  const isPasswordValid = user.isPasswordCorrect(password);
+  // console.log(user, password);
+  const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
     throw new ApiError(409, "Invalid user credentials");
   }
@@ -177,7 +179,7 @@ STEP TO LOGOUT THE USER :
 */
 
 const logoutUser = asyncHandler(async (req, res) => {
-  const user = await User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     req.user._id,
     { $set: { refreshToken: undefined } },
     { new: true }
