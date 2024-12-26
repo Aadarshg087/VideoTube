@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
@@ -23,6 +24,7 @@ STEPS TO REGISTER THE USER :
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, username, password } = req.body;
+  // console.log(req.body);
   // console.log(req.body);
 
   // one way
@@ -54,7 +56,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (existedUser) {
     throw new ApiError(409, "Username or email already exists"); // 409 - conflict
   }
-  console.log(req.files);
+  // console.log(req.files);
 
   const avatarLocalPath = req.files?.avatar[0]?.path;
   const coverImageLocalPath = req.files?.coverImage?.[0]?.path || "";
@@ -118,8 +120,10 @@ const generateTokens = async (userid) => {
     const user = await User.findOne(userid);
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
+
     user.refreshToken = refreshToken;
     await user.save({ ValidateBeforeSave: false });
+
     return { refreshToken, accessToken };
   } catch (error) {
     throw new ApiError(500, "Error in generating tokens", error);
@@ -128,8 +132,9 @@ const generateTokens = async (userid) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-  console.log(req.body);
-  console.log(username, email, password);
+  // console.log(req);
+  // console.log(req.body);
+  // console.log(username, email, password);
   if (!username && !email) {
     throw new ApiError(400, "Username or email is required");
   }
@@ -143,6 +148,13 @@ const loginUser = asyncHandler(async (req, res) => {
   }
   // console.log(user, password);
   const isPasswordValid = await user.isPasswordCorrect(password);
+  // const tempPassword = await bcrypt.hash(password, 10);
+  // console.log(password);
+  // user.password = password;
+  // console.log(tempPassword);
+  // await user.save({ validateBeforeSave: false });
+  // return res.status(200).json({ Status: "Successfully update hased password" });
+
   if (!isPasswordValid) {
     throw new ApiError(409, "Invalid user credentials");
   }
@@ -251,4 +263,109 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+/* 
+
+STEPS TO UPDATE THE PASSWORD
+- We can validate the loggedin from the middleware or get the current user details
+- Then, we can take oldPassword, newPassword and confirmPassword
+- if checks are fine
+- We can update the user with a new password
+- 
+*/
+
+const updatePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(400, "New Password does not match confirm password");
+  }
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(400, "Unauthorized request");
+  }
+  // console.log(oldPassword);
+  // console.log(user);
+  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+  // console.log(isPasswordValid);
+  if (!isPasswordValid) {
+    throw new ApiError(400, "Password does not match");
+  }
+
+  const updatedUser = await User.findById(user._id);
+  updatedUser.password = newPassword;
+  await user.save({ ValidateBeforeSave: true });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "Password Updated Successfully"));
+});
+
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { fullName, username, email, password } = req.body;
+  const currUser = req.user;
+
+  const user = await User.findOne(currUser._id);
+
+  if (!user) {
+    throw new ApiError(400, "User not found");
+  }
+
+  const userFields = ["fullName", "username", "email", "password"];
+  const userValues = [fullName, username, email, password];
+  for (let i = 0; i < userFields.length; i++) {
+    // console.log(userFields[i]);
+    // console.log(userValues[i]);
+    if (userValues[i] !== undefined && userFields[i] !== "password") {
+      user[userFields[i]] = userValues[i];
+    }
+  }
+  await user.save({ ValidateBeforeSave: false });
+
+  if (password) {
+    user.password = password;
+
+    await user.save();
+  }
+
+  // const { password: hashPassword, refershToken, ...updatedUser } = user;
+  // console.log("updatedUser : ", updatedUser);
+  // console.log("default User : ", user);
+
+  const updatedUser = await User.findById(currUser._id).select("-password");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "User Updated Successfully"));
+});
+
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  const currUser = req.user;
+  const user = await User.findById(currUser._id).select("-password");
+  if (!user) {
+    throw new ApiError(400, "User is not logged in");
+  }
+  // console.log("req.files", req.files);
+  const newAvatar = req.files?.avatar[0].path;
+  if (!newAvatar) {
+    throw new ApiError(400, "Avatar file is missing");
+  }
+  const newAvatarPath = await uploadOnCloudinary(newAvatar);
+  if (!newAvatarPath) {
+    throw new ApiError(500, "Error while uploading file");
+  }
+
+  user.avatar = newAvatarPath.url;
+  user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar is update successfully"));
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  updatePassword,
+  updateAccountDetails,
+  updateUserAvatar,
+};
