@@ -29,6 +29,7 @@ router.route("/register").post(
 
 router.route("/login").post(loginUser);
 
+// User must be logged In
 router.route("/logout").post(verifyJWT, logoutUser);
 
 router.route("/refreshToken").post(verifyJWT, refreshAccessToken);

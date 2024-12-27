@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
@@ -58,27 +57,31 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   // console.log(req.files);
 
-  const avatarLocalPath = req.files?.avatar[0]?.path;
+  const avatarLocalPath = req.files?.avatar?.[0]?.path || "";
   const coverImageLocalPath = req.files?.coverImage?.[0]?.path || "";
 
-  if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar is required");
-  }
+  // if (!avatarLocalPath) {
+  //   throw new ApiError(400, "Avatar is required");
+  // }
 
   // console.log("req ", req);
   // console.log("req.files from multer ", req.files);
-
-  const aavatar = await uploadOnCloudinary(avatarLocalPath);
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  let aavatar, coverImage;
+  if (avatarLocalPath != "") {
+    aavatar = await uploadOnCloudinary(avatarLocalPath);
+  }
+  if (coverImageLocalPath != "") {
+    coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  }
 
   // console.log(avatar);
 
-  if (!aavatar) {
-    throw new ApiError(
-      500,
-      "File is not uploaded due to internal server error"
-    );
-  }
+  // if (!aavatar) {
+  //   throw new ApiError(
+  //     500,
+  //     "File is not uploaded due to internal server error"
+  //   );
+  // }
   // console.log(username.toLowerCase());
   // console.log(avatar.url);
 
@@ -87,7 +90,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase(),
     email,
     password,
-    avatar: aavatar.url,
+    avatar: aavatar?.url || "",
     coverImage: coverImage?.url || "",
   });
 
