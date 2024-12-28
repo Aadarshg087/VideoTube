@@ -3,6 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { Subscription } from "../models/subscription.model.js";
+import mongoose from "mongoose";
 
 const uploadVideo = asyncHandler(async (req, res) => {
   const userId = req.user._id;
@@ -54,16 +56,15 @@ HOME PAGE OF VIDEOTUBE:
 -- Find subcribed channels and bring their videos (Double aggregation)
 */
 const subscribedChannelVideos = asyncHandler(async (req, res) => {
-  const { userId, username } = req.body;
-  if (!userId || !username) {
+  const username = req.user.username;
+  if (!username) {
     throw new ApiError(400, "User is not logged in");
   }
 
   const subscribedChannelVideos = await Subscription.aggregate([
     {
-      $match: { subscriber: new mongoose.Types.ObjectId(currentUser._id) },
+      $match: { subscriber: new mongoose.Types.ObjectId(req.user._id) },
     },
-
     {
       $lookup: {
         from: "videos", // The collection where videos are stored

@@ -25,8 +25,6 @@ router.route("/uploadVideo").post(
   uploadVideo
 );
 
-router.route("/home").post(subscribedChannelVideos);
-
-
+router.route("/home").get(subscribedChannelVideos);
 
 export default router;
