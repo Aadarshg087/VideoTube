@@ -7,6 +7,7 @@ import {
   updatePassword,
   updateAccountDetails,
   updateUserAvatar,
+  getUserProfile,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -41,5 +42,7 @@ router.route("/updateAccount").post(verifyJWT, updateAccountDetails);
 router
   .route("/updateAvatar")
   .post(upload.fields([{ name: "avatar" }]), verifyJWT, updateUserAvatar);
+
+router.route("/u/:username").get(getUserProfile);
 
 export default router;

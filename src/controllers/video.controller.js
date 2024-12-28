@@ -4,54 +4,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-import mongoose from "mongoose";
-
-const getAllVideos = asyncHandler(async (req, res) => {
-  /* 
-  Map req.user._id with owner._id
-  and return the object of the Video
-
-  We will use mongo aggregation pipelines.
-  We need only thumbnail, videoLink, Title, owner name, maybe Views
-
-  I am confused between whether I should make this as the card info or get the allVid of particular user
-  If it is a particular user, I need to extract the info from the params
-*/
-  const userId = req.user._id;
-  const allVideos = await Video.aggregate([
-    { $match: { owner: new mongoose.Types.ObjectId(userId) } },
-    {
-      $lookup: {
-        from: "users",
-        localField: "owner",
-        foreignField: "_id",
-        as: "ownerDetails",
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        videoLink: 1,
-        thumbNail: 1,
-        title: 1,
-        views: 1,
-        duration: 1,
-        ownerDetails: {
-          username: 1,
-          email: 1,
-        },
-      },
-    },
-  ]);
-  if (!allVideos) {
-    throw new ApiError(500, "Error in fecthing the details");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, allVideos, "Data Fetched Successfully"));
-});
-
 const uploadVideo = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { title, description } = req.body;
@@ -93,5 +45,57 @@ const uploadVideo = asyncHandler(async (req, res) => {
       )
     );
 });
+/* 
 
-export { getAllVideos, uploadVideo };
+HOME PAGE OF VIDEOTUBE:
+- Brings the videos of the subscribed videotube channel
+- then loads the rest of explore section which simply means random videos
+
+-- Find subcribed channels and bring their videos (Double aggregation)
+*/
+const subscribedChannelVideos = asyncHandler(async (req, res) => {
+  const { userId, username } = req.body;
+  if (!userId || !username) {
+    throw new ApiError(400, "User is not logged in");
+  }
+
+  const subscribedChannelVideos = await Subscription.aggregate([
+    {
+      $match: { subscriber: new mongoose.Types.ObjectId(currentUser._id) },
+    },
+
+    {
+      $lookup: {
+        from: "videos", // The collection where videos are stored
+        localField: "channel", // The subscribed channel field in subscriptions
+        foreignField: "owner", // The owner field in videos
+        as: "channelVideos", // Alias for the fetched videos
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        channel: 1,
+        channelVideos: {
+          videoLink: 1,
+          thumbNail: 1,
+          title: 1,
+          views: 1,
+          duration: 1,
+          createdAt: 1,
+        },
+      },
+    },
+  ]);
+  if (!subscribedChannelVideos) {
+    throw new ApiError(500, "Error in fetching the video");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, subscribedChannelVideos, "Data Fetched Successfully")
+    );
+});
+
+export { uploadVideo, subscribedChannelVideos };

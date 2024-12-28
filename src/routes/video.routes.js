@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { getAllVideos, uploadVideo } from "../controllers/video.controller.js";
+import {
+  uploadVideo,
+  subscribedChannelVideos,
+} from "../controllers/video.controller.js";
 
 const router = Router();
 
 // Only authenticated user
 router.use(verifyJWT);
-
-router.route("/getAllVideos").get(getAllVideos);
 
 router.route("/uploadVideo").post(
   upload.fields([
@@ -23,5 +24,9 @@ router.route("/uploadVideo").post(
   ]),
   uploadVideo
 );
+
+router.route("/home").post(subscribedChannelVideos);
+
+
 
 export default router;

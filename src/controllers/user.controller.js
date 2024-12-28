@@ -4,6 +4,8 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import { Video } from "../models/video.model.js";
+import mongoose from "mongoose";
 
 /*
 
@@ -363,6 +365,71 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Avatar is update successfully"));
 });
 
+/* 
+
+  STEPS TO GET THE USER PROFILE:
+
+  - Check username in the database
+  - Extract the corresponding info from the Video schema of the current user
+  - Map user._id to the Video.owner
+
+  We will use mongo aggregation pipelines.
+  We need only thumbnail, videoLink, Title, owner name, maybe Views
+
+  This will return User and All Video details of that user
+*/
+
+const getUserProfile = asyncHandler(async (req, res) => {
+  let username = req.params.username;
+  username = username.substring(1);
+  console.log(username);
+
+  const user = await User.findOne({ username: username });
+  if (!user) {
+    throw new ApiError(400, "Username does not exist");
+  }
+
+  const allVideos = await User.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(user._id) } },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "_id",
+        foreignField: "owner",
+        as: "videoDetails",
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        username: 1,
+        email: 1,
+        fullName: 1,
+        "videoDetails.videoLink": 1,
+        "videoDetails.thumbNail": 1,
+        "videoDetails.title": 1,
+        "videoDetails.views": 1,
+        "videoDetails.duration": 1,
+        "videoDetails.createdAt": 1,
+
+        // videoDetails: { // this will work too
+        //   videoLink: 1,
+        //   thumbNail: 1,
+        //   title: 1,
+        // },
+      },
+    },
+  ]);
+
+  if (!allVideos) {
+    throw new ApiError(500, "Error in fecthing the details");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, allVideos, "Data Fetched Successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -371,4 +438,5 @@ export {
   updatePassword,
   updateAccountDetails,
   updateUserAvatar,
+  getUserProfile,
 };
