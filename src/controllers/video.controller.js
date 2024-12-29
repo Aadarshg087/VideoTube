@@ -99,4 +99,8 @@ const subscribedChannelVideos = asyncHandler(async (req, res) => {
     );
 });
 
+const likeVideo = asyncHandler(async (req, res) => {
+  
+});
+
 export { uploadVideo, subscribedChannelVideos };
