@@ -86,7 +86,7 @@ const updateComment = asyncHandler(async (req, res) => {
   }
 
   Comment.content = newComment;
-  const response = await Comment.save({ ValidateBeforeSave: false });
+  const response = await Comment.save({ validateBeforeSave: false });
   if (!response) {
     throw new ApiError(500, "Error updating the comment");
   }

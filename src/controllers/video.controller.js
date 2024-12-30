@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Subscription } from "../models/subscription.model.js";
 import mongoose from "mongoose";
+import { Likes } from "../models/likes.model.js";
 
 const uploadVideo = asyncHandler(async (req, res) => {
   const userId = req.user._id;
@@ -36,6 +37,15 @@ const uploadVideo = asyncHandler(async (req, res) => {
     thumbNail: thumbNailLink.url,
     owner: userId,
   });
+
+  // creating the like databse with the initial count of likes as 0
+  const likeDB = await Likes.create({
+    videoLink: videoLink.url,
+  });
+  
+  if (!likeDB) {
+    throw new ApiError(500, "Error in making entry in Likes Database");
+  }
 
   return res
     .status(200)
@@ -97,10 +107,6 @@ const subscribedChannelVideos = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(200, subscribedChannelVideos, "Data Fetched Successfully")
     );
-});
-
-const likeVideo = asyncHandler(async (req, res) => {
-  
 });
 
 export { uploadVideo, subscribedChannelVideos };
