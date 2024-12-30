@@ -42,7 +42,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
   const likeDB = await Likes.create({
     videoLink: videoLink.url,
   });
-  
+
   if (!likeDB) {
     throw new ApiError(500, "Error in making entry in Likes Database");
   }
@@ -109,4 +109,27 @@ const subscribedChannelVideos = asyncHandler(async (req, res) => {
     );
 });
 
-export { uploadVideo, subscribedChannelVideos };
+const updateViews = asyncHandler(async (req, res) => {
+  const currUser = req.user;
+  if (!currUser) {
+    throw new ApiError(400, "User is not logged in");
+  }
+  const currVideo = req.body;
+  if (!currVideo) {
+    throw new ApiError(500, "Error in finding the curr Video");
+  }
+
+  const video = await Video.findOneAndUpdate(
+    { videoLink: currVideo },
+    { $inc: { views: 1 } },
+    { new: true }
+  );
+  if (!video) {
+    throw new ApiError(500, "Error in updating the views");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, video, "Successfully Updated the views"));
+});
+
+export { uploadVideo, subscribedChannelVideos, updateViews };

@@ -23,6 +23,19 @@ const likeVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Cannot find the video link");
   }
 
+  // exists in dislike array
+  let dislikeByUser = await Likes.findOneAndUpdate(
+    {
+      videoLink: currVideoLink,
+      dislikedBy: user._id,
+    },
+    {
+      $pull: { likedBy: user._id },
+      $inc: { dislikeCount: -1 },
+    },
+    { new: true }
+  );
+
   // if user had already liked the video, it will dec the counter by one getting to neutral state
   let likedByUser = await Likes.findOneAndUpdate(
     {
@@ -68,6 +81,20 @@ const dislikeVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Could not find the video link");
   }
 
+  // if this user already liked the video, remove its contribution from like
+  let likedByUser = await Likes.findOneAndUpdate(
+    {
+      videoLink: currVideoLink,
+      likedBy: user._id,
+    },
+    {
+      $pull: { likedBy: user._id },
+      $inc: { likeCount: -1 },
+    },
+    { new: true }
+  );
+
+  // if already dislike the video, make it neutral
   let dislikeByUser = await Likes.findOneAndUpdate(
     {
       videoLink: currVideoLink,
@@ -81,7 +108,7 @@ const dislikeVideo = asyncHandler(async (req, res) => {
   );
 
   if (!dislikeByUser) {
-    // if not liked by user, adding it contribution
+    // if not disliked by user, adding its contribution
     dislikeByUser = await Likes.findOneAndUpdate(
       { videoLink: currVideoLink },
       {
