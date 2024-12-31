@@ -1,7 +1,6 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Subscription } from "../models/subscription.model.js";
 import { Video } from "../models/video.model.js";
 import { Playlist } from "../models/playlist.model.js";
 
@@ -145,4 +144,29 @@ const deletePlaylist = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, isDeleted, "Successfully deleted the playlist"));
 });
-export { createPlaylist, updatePlaylist, removeFromPlaylist, deletePlaylist };
+
+const getAllPlaylists = asyncHandler(async (req, res) => {
+  const currUser = req.user;
+  if (!currUser) {
+    throw new ApiError(400, "User is not logged in");
+  }
+
+  const allPlaylists = await Playlist.find({ owner: currUser._id });
+  if (!allPlaylists) {
+    throw new ApiError(500, "Error in fetching the playlists");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, getAllPlaylist, "Successfully fetched all playlists")
+    );
+});
+
+export {
+  createPlaylist,
+  updatePlaylist,
+  removeFromPlaylist,
+  deletePlaylist,
+  getAllPlaylists,
+};
