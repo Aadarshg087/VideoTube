@@ -37,10 +37,10 @@ const uploadVideo = asyncHandler(async (req, res) => {
     thumbNail: thumbNailLink.url,
     owner: userId,
   });
-
+  console.log(videoLink);
   // creating the like databse with the initial count of likes as 0
   const likeDB = await Likes.create({
-    videoLink: videoLink.url,
+    videoId: video._id,
   });
 
   if (!likeDB) {
@@ -105,7 +105,11 @@ const subscribedChannelVideos = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, subscribedChannelVideos, "Data Fetched Successfully")
+      new ApiResponse(
+        200,
+        { subscribedChannelVideos, username },
+        "Data Fetched Successfully"
+      )
     );
 });
 

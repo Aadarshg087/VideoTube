@@ -15,7 +15,7 @@ import { Likes } from "../models/likes.model.js";
 const likeVideo = asyncHandler(async (req, res) => {
   const currUser = req.user;
   if (!currUser) {
-    throw new ApiError(400, "User is not loggedi in");
+    throw new ApiError(400, "User is not logged in");
   }
   const { currVideoLink } = req.body;
   // const currVideoLink = req.params;

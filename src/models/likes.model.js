@@ -3,7 +3,7 @@ import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const LikesSchema = new Schema(
   {
-    videoLink: {
+    videoId: {
       type: Schema.Types.ObjectId,
       ref: "Video",
       required: true,
