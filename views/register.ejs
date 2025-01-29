@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | VideoTube</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+      /* Styling */
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(45deg, #423569, #6e56b7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 640px;
+        border-radius: 0.75rem;
+        background-color: rgba(17, 24, 39, 1);
+        padding: 2rem;
+        color: rgba(243, 244, 246, 1);
+        box-shadow:
+          0 4px 6px rgba(0, 0, 0, 0.1),
+          0 2px 4px rgba(0, 0, 0, 0.06);
+      }
+
+      .title {
+        text-align: center;
+        font-size: 1.5rem;
+        line-height: 2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        width: 100%;
+      }
+
+      .form {
+        width: 90%;
+        max-width: 520px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .columns-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        width: 100%;
+        margin-bottom: 1.5rem;
+      }
+
+      .input-group {
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        line-height: 1.25rem;
+        width: 100%;
+      }
+
+      .right-column .input-group {
+        margin-bottom: 1rem;
+      }
+
+      .input-group label {
+        display: block;
+        color: rgba(156, 163, 175, 1);
+        margin-bottom: 4px;
+      }
+
+      .input-group input {
+        width: 100%;
+        border-radius: 0.375rem;
+        border: 1px solid rgba(55, 65, 81, 1);
+        outline: 0;
+        background-color: rgba(17, 24, 39, 1);
+        padding: 0.75rem 1rem;
+        color: rgba(243, 244, 246, 1);
+        box-sizing: border-box;
+      }
+
+      .input-group input:focus {
+        border-color: rgba(167, 139, 250, 1);
+      }
+
+      .required:after {
+        content: " *";
+        color: rgba(239, 68, 68, 1);
+      }
+
+      .file-inputs {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+
+      .sign {
+        width: 100%;
+        background-color: rgba(167, 139, 250, 1);
+        padding: 0.75rem;
+        text-align: center;
+        color: rgba(17, 24, 39, 1);
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        font-size: medium;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 1rem;
+      }
+
+      .sign:hover {
+        background-color: rgba(139, 92, 246, 1);
+      }
+
+      .social-message {
+        display: flex;
+        align-items: center;
+        padding-top: 1.5rem;
+        width: 100%;
+      }
+
+      .line {
+        height: 1px;
+        flex: 1 1 0%;
+        background-color: rgba(55, 65, 81, 1);
+      }
+
+      .social-message .message {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: rgba(156, 163, 175, 1);
+      }
+
+      .signup {
+        text-align: center;
+        font-size: 0.75rem;
+        line-height: 1rem;
+        color: rgba(156, 163, 175, 1);
+        margin-top: 1rem;
+        width: 100%;
+      }
+
+      .signup a {
+        color: rgba(243, 244, 246, 1);
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .signup a:hover {
+        text-decoration: underline rgba(167, 139, 250, 1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <p class="title">Register</p>
+      <form class="form" method="post" action="/api/v1/users/register">
+        <div class="columns-container">
+          <!-- Left Column -->
+          <div class="left-column">
+            <div class="input-group">
+              <label for="fullName" class="required">Full Name</label>
+              <input
+                type="text"
+                name="fullName"
+                id="fullName"
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <label for="username" class="required">Username</label>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Enter your username"
+                required
+              />
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div class="right-column">
+            <div class="input-group">
+              <label for="email" class="required">Email</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <label for="password" class="required">Password</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        <div class="file-inputs">
+          <div class="input-group">
+            <label for="coverImage">Cover Image</label>
+            <input type="file" name="coverImage" id="coverImage" />
+          </div>
+          <div class="input-group">
+            <label for="avatarImage" class="required">Avatar Image</label>
+            <input type="file" name="avatarImage" id="avatarImage" />
+          </div>
+        </div>
+        <button class="sign">Register</button>
+      </form>
+      <p class="signup">
+        Already have an account?
+        <a rel="noopener noreferrer" href="/api/v1/users/login">Login</a>
+      </p>
+    </div>
+  </body>
+</html>

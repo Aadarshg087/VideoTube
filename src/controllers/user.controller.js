@@ -137,6 +137,7 @@ const generateTokens = async (userid) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
+  console.log(req.body);
   // console.log(req);
   // console.log(req.body);
   // console.log(username, email, password);
@@ -144,6 +145,9 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Username or email is required");
   }
 
+  console.log(username);
+  console.log(email);
+  console.log(password);
   const user = await User.findOne({
     $or: [{ email }, { username }],
   });
@@ -173,7 +177,7 @@ const loginUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
   };
-  res
+  return res
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)

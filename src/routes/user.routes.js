@@ -14,21 +14,30 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/register").post(
-  upload.fields([
-    {
-      name: "avatar",
-      maxCount: 1,
-    },
-    {
-      name: "coverImage",
-      maxCount: 1,
-    },
-  ]),
-  registerUser
-);
-
-router.route("/login").post(loginUser);
+router
+  .route("/register")
+  .get((req, res) => {
+    res.render("register");
+  })
+  .post(
+    upload.fields([
+      {
+        name: "avatar",
+        maxCount: 1,
+      },
+      {
+        name: "coverImage",
+        maxCount: 1,
+      },
+    ]),
+    registerUser
+  );
+router
+  .route("/login")
+  .get((req, res) => {
+    res.render("login");
+  })
+  .post(loginUser);
 
 // User must be logged In
 router.route("/logout").post(verifyJWT, logoutUser);

@@ -41,7 +41,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
   // creating the like databse with the initial count of likes as 0
   const likeDB = await Likes.create({
     videoId: video._id,
-  });
+  });``
 
   if (!likeDB) {
     throw new ApiError(500, "Error in making entry in Likes Database");
