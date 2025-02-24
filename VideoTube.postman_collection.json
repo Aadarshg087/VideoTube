@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "5f7d5f51-ba2d-4cbb-b103-8bb81c7d2400",
+		"name": "VideoTube",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38042158"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fullName",
+									"value": "Rahul Kumar",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "rahulCodes",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "Rahul@apple.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "helloRahul",
+									"type": "text"
+								},
+								{
+									"key": "coverImage",
+									"type": "file",
+									"src": "/C:/Users/aadar/Desktop/Screenshot 2024-11-11 132834.png"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/aadar/Desktop/WA todo.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server}}/users/register",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"Julissa@gmail.com\",\r\n    \"password\" : \"ProJulissa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/login",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/users/u/:rahulcodes",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"u",
+								":rahulcodes"
+							],
+							"variable": [
+								{
+									"key": "rahulcodes",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/refreshToken",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\" : \"HELLORAHUL1\",\r\n    \"newPassword\" : \"HELLORAHUL2\",\r\n    \"confirmPassword\" : \"HELLORAHUL2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/updatePassword",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"updatePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\" : \"Rahul Coder\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/updateAccount",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"updateAccount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Avatar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/aadar/Desktop/Master_CF.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server}}/users/updateAvatar",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"updateAvatar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users/logout",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Videos",
+			"item": [
+				{
+					"name": "Upload Video",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "videoLocal",
+									"type": "file",
+									"src": "/C:/Users/aadar/Desktop/BackendPractice/Backend/public/Dummy Users/Conor Jefferson/CPVideo.mkv"
+								},
+								{
+									"key": "thumbNailLocal",
+									"type": "file",
+									"src": "/C:/Users/aadar/Desktop/BackendPractice/Backend/public/Dummy Users/Conor Jefferson/5 Tips and Setups to make your Codeforces Practice Efficient.jpg"
+								},
+								{
+									"key": "title",
+									"value": "5 Tips and Setups to make your Codeforces Practice Efficient",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Struggling to improve your competitive programming skills on Codeforces? 🚀 In this video, we’re sharing *5 essential tips and setups* to make your Codeforces practice more efficient and results-driven! Whether you're a beginner aiming to climb the ranks or an experienced coder looking to optimize your strategy, these actionable insights will help you:\n\n🔥 Master problem selection for effective learning.  \n⚡ Set up your coding environment for maximum productivity.  \n📈 Use tools and plugins to track your progress.  \n💡 Apply smart problem-solving techniques for faster improvement.  \n⏳ Manage time effectively during practice and contests.  \n\nDon't just practice harder; practice smarter! Let’s level up your Codeforces journey together. 💪  ",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server}}/videos/uploadVideo",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"videos",
+								"uploadVideo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Home Page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/videos/home",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"videos",
+								"home"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Temp Req",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}users/u/:Programming%20with%20Conor",
+					"host": [
+						"{{server}}users"
+					],
+					"path": [
+						"u",
+						":Programming%20with%20Conor"
+					],
+					"variable": [
+						{
+							"key": "Programming%20with%20Conor",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
